@@ -51,7 +51,7 @@ Please report any problems to RT, the Catalyst mailing list, or the
 
 This module starts the SeleniumRC server and your Catalyst app so that
 you can test it with SeleniumRC.  Once you've called
-C<Test::WWW::Selenium::Catalyst->start>, everything is just like
+C<< Test::WWW::Selenium::Catalyst->start >>, everything is just like
 L<Test::WWW::Selenium|Test::WWW:Selenium>.
 
 =head1 FUNCTIONS
@@ -80,7 +80,7 @@ sub _start_server {
     my $pid;
     if(0 == ($pid = fork())){
 	local $SIG{TERM} = sub {
-	    diag("Selenium server $$ going down (TERM)");
+	    diag("Selenium server $$ going down (TERM)") if $DEBUG;
 	    exit 0;
 	};
 	
