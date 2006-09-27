@@ -14,7 +14,7 @@ my $sel = Test::WWW::Selenium::Catalyst->start({browser => '*firefox'});
 $sel->open_ok('/');
 $sel->text_is("link=Click here", "Click here");
 $sel->click_ok("link=Click here");
-$sel->wait_for_page_to_load_ok("30000");
+$sel->wait_for_page_to_load_ok("30000", 'wait');
 for my $i (1..10){
     $sel->open_ok("/words/$i");
     $sel->is_text_present_ok(

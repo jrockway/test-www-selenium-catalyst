@@ -40,12 +40,6 @@ on.  I can live with that, but I need your help to get to that stage!
 Please report any problems to RT, the Catalyst mailing list, or the
 #catalyst IRC channel on L<irc.perl.org>.  Thanks!
 
-=head2 KNOWN ISSUES
-
-Sometimes the Selenium server doesn't die after the tests when running
-under C<make test>.  C<prove> works fine, so until I (or you!) figure
-out the problem, use C<prove>.
-
 =head1 SYNOPSIS
 
     use Test::WWW::Selenium::Catalyst 'MyApp';
@@ -95,7 +89,7 @@ sub _start_server {
 	if(!$DEBUG){
 	    close *STDERR;
 	    close *STDOUT;
-	    close *STDIN;
+	    #close *STDIN;
 	}
 	
 	diag("Selenium running in $$") if $DEBUG;

@@ -17,7 +17,3 @@ requires(
 	);
 auto_install();
 WriteAll();
-
-print {*STDERR} "*** \n";
-print {*STDERR} "*** BUG: make test might not work.  Please try prove instead.\n";
-print {*STDERR} "*** \n";
