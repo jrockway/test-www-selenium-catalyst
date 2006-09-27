@@ -13,6 +13,11 @@ requires(
 	 'Catalyst::Runtime' => 5.7001,
 	 'Test::WWW::Selenium' => 0,
 	 'Test::More' => 0,
-);
+	 'Catalyst::Utils' => 0,
+	);
 auto_install();
 WriteAll();
+
+print {*STDERR} "*** \n";
+print {*STDERR} "*** BUG: make test might not work.  Please try prove instead.\n";
+print {*STDERR} "*** \n";

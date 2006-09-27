@@ -19,11 +19,32 @@ my $app_pid; # pid of myapp server
 
 =head1 NAME
 
-Test::WWW::Selenium::Catalyst - Test your Catalyst app with Selenium
+Test::WWW::Selenium::Catalyst - Test your Catalyst application with Selenium
 
 =cut
 
 our $VERSION = '0.00_01';
+
+=head1 DEVELOPER RELEASE
+
+This is a developer release.  It's working for me in production, but
+it depends on a Java application (SeleniumRC), which can be
+unreliable.  On my Debian system, I had to put C<firefox-bin> in my
+path, and add C</usr/lib/firefox> to C<LD_LIBRARY_PATH>.  Every distro
+and OS is different, so I'd like some feedback on how this works on
+your system.  I would like to find a clean solution that lets this
+module "Just Work" for everyone, but I have a feeling that it's going
+to look more like C<if(gentoo){ ... } elsif (debian) { ... }> and so
+on.  I can live with that, but I need your help to get to that stage!
+
+Please report any problems to RT, the Catalyst mailing list, or the
+#catalyst IRC channel on L<irc.perl.org>.  Thanks!
+
+=head2 KNOWN ISSUES
+
+Sometimes the Selenium server doesn't die after the tests when running
+under C<make test>.  C<prove> works fine, so until I (or you!) figure
+out the problem, use C<prove>.
 
 =head1 SYNOPSIS
 
@@ -33,6 +54,11 @@ our $VERSION = '0.00_01';
     my $sel = Test::WWW::Selenium::Catalyst->start; 
     $sel->open_ok('/');
     $sel->is_text_present_ok('Welcome to MyApp');
+
+This module starts the SeleniumRC server and your Catalyst app so that
+you can test it with SeleniumRC.  Once you've called
+C<Test::WWW::Selenium::Catalyst->start>, everything is just like
+L<Test::WWW::Selenium|Test::WWW:Selenium>.
 
 =head1 FUNCTIONS
 
@@ -186,6 +212,24 @@ statement:
 
 C<MyApp> is the name of your Catalyst app.
 
+=head1 SEE ALSO
+
+=over 4 
+
+=item * 
+
+Selenium website: L<http://www.openqa.org/>
+
+=item * 
+
+Description of what you can do with the C<$sel> object: L<Test::WWW::Selenium>
+
+=item * 
+
+If you don't need a real web browser: L<Test::WWW::Mechanize::Catalyst>
+
+=back
+
 =head1 AUTHOR
 
 Jonathan Rockway, C<< <jrockway at cpan.org> >>
@@ -227,6 +271,8 @@ L<http://search.cpan.org/dist/Test-WWW-Selenium-Catalyst>
 =back
 
 =head1 ACKNOWLEDGEMENTS
+
+Thanks for mst for getting on my case to actually write this thing :)
 
 =head1 COPYRIGHT & LICENSE
 
