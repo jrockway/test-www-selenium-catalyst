@@ -23,11 +23,11 @@ Test::WWW::Selenium::Catalyst - Test your Catalyst application with Selenium
 
 =cut
 
-our $VERSION = '0.00_01';
+our $VERSION = '0.01';
 
-=head1 DEVELOPER RELEASE
+=head1 DEVELOPERISH RELEASE
 
-This is a developer release.  It's working for me in production, but
+This is still a test release.  It's working for me in production, but
 it depends on a Java application (SeleniumRC), which can be
 unreliable.  On my Debian system, I had to put C<firefox-bin> in my
 path, and add C</usr/lib/firefox> to C<LD_LIBRARY_PATH>.  Every distro
