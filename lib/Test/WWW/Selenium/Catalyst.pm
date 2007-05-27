@@ -54,7 +54,7 @@ you can test it with SeleniumRC.  Once you've called
 C<< Test::WWW::Selenium::Catalyst->start >>, everything is just like
 L<Test::WWW::Selenium|Test::WWW:Selenium>.
 
-=head1 FUNCTIONS
+=head1 METHODS
 
 =head2 start
 
@@ -236,33 +236,17 @@ L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Test-WWW-Selenium-Catalyst>.
 I will be notified, and then you'll automatically be notified of progress on
 your bug as I make changes.
 
-=head1 SUPPORT
+=head1 PATCHES
 
-You can find documentation for this module with the perldoc command.
+Send me unified diffs against the git HEAD at:
 
-    perldoc Test::WWW::Selenium::Catalyst
+    git://git.jrock.us/Test-WWW-Selenium-Catalyst
 
-You can also look for information at:
+You can view the repository online at 
 
-=over 4
+    http://git.jrock.us/?p=Test-WWW-Selenium-Catalyst.git;a=summary
 
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/Test-WWW-Selenium-Catalyst>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/Test-WWW-Selenium-Catalyst>
-
-=item * RT: CPAN's request tracker
-
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Test-WWW-Selenium-Catalyst>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/Test-WWW-Selenium-Catalyst>
-
-=back
+Thanks in advance for your contributions!
 
 =head1 ACKNOWLEDGEMENTS
 
