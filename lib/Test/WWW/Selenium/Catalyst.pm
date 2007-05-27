@@ -93,7 +93,7 @@ sub _start_server {
 	}
 	
 	diag("Selenium running in $$") if $DEBUG;
-        Alien::SeleniumRC->start()
+        Alien::SeleniumRC::start()
 	    or croak "Can't start Selenium server";
 	diag("Selenium server $$ going down") if $DEBUG;
 	exit 1;
