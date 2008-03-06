@@ -1,5 +1,8 @@
 Revision history for Test-WWW-Selenium-Catalyst
 
+0.02    6 March 2008
+        Don't call $sel->start; this breaks stuff
+
 0.01    27 May 2007
 	Mostly the same... released for wider testing.
 
