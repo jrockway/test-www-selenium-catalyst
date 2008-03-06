@@ -16,6 +16,7 @@ my $DEBUG = $ENV{CATALYST_DEBUG};
 my $app; # app name (MyApp)
 my $sel_pid; # pid of selenium server
 my $app_pid; # pid of myapp server
+my $www_selenium;
 
 =head1 NAME
 
@@ -160,19 +161,23 @@ sub start {
 	      new(host => 'localhost',
 		  port => 4444,
 		  browser => $args->{browser} || '*firefox',
-		  browser_url => 'http://localhost:3000/'
+		  browser_url => 'http://localhost:3000/',
+		  auto_stop => 0,
 		 );
 	};
 	$error = $@;
     }
+    croak "Can't start selenium: $error" if $error;
     
-    eval { $sel->start }
-      or croak "Can't start selenium: $@ (previous error: $error)";
-    
-    return $sel;
+    return $www_selenium = $sel;
 }
 
 END {
+    if($www_selenium){
+	diag("Shutting down Selenium Server $sel_pid") if $DEBUG;
+	$www_selenium->do_command('shutDown');
+	undef $www_selenium;
+    }
     if($sel_pid){
 	diag("Killing Selenium Server $sel_pid") if $DEBUG;
 	kill 15, $sel_pid or diag "Killing Selenium: $!";
