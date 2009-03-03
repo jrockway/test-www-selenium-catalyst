@@ -12,11 +12,11 @@ BEGIN { $ENV{CATALYST_ENGINE} ||= 'HTTP'; }
 
 local $SIG{CHLD} = 'IGNORE';
 
-my $DEBUG = $ENV{CATALYST_DEBUG};
-my $app; # app name (MyApp)
-my $sel_pid; # pid of selenium server
-my $app_pid; # pid of myapp server
-my $www_selenium;
+our $DEBUG = $ENV{CATALYST_DEBUG};
+our $app; # app name (MyApp)
+our $sel_pid; # pid of selenium server
+our $app_pid; # pid of myapp server
+our $www_selenium;
 
 =head1 NAME
 
@@ -24,7 +24,7 @@ Test::WWW::Selenium::Catalyst - Test your Catalyst application with Selenium
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 =head1 DEVELOPERISH RELEASE
 
@@ -43,7 +43,7 @@ Please report any problems to RT, the Catalyst mailing list, or the
 
 =head1 SYNOPSIS
 
-    use Test::WWW::Selenium::Catalyst 'MyApp';
+    use Test::WWW::Selenium::Catalyst 'MyApp', 'command line to selenium';
     use Test::More tests => 2;
 
     my $sel = Test::WWW::Selenium::Catalyst->start; 
@@ -57,13 +57,57 @@ L<Test::WWW::Selenium|Test::WWW:Selenium>.
 
 =head1 METHODS
 
-=head2 start
+=head2 start(\%args)
 
-Starts the Selenium and Catalyst servers, and returns a
-pre-initialized, ready-to-use Test::WWW::Selenium object.
+Starts the Selenium and Catalyst servers, and returns a pre-initialized,
+ready-to-use Test::WWW::Selenium object.
 
-[NOTE] The selenium server is actually started when you C<use> this
-module, and it's killed when your test exits.
+Arguments:
+
+=over
+
+=item app_uri
+
+URI at which the application can be reached. If this is specified then no
+application server will be started.
+
+=item port
+
+Port on which to run the catalyst application server. The C<MYAPP_PORT>
+environment variable is also respected.
+
+
+=item selenium_class
+
+B<Default>: Test::WWW::Selenium
+
+Classname of Selenium object to create. Use this if you want to subclass
+selenium to add custom logic.
+
+=item selenium_host
+
+=item selenium_port
+
+Location of externally running selenium server if you do not wish this module
+to control one. See also below for details.
+
+=back
+
+All other options passed verbatim to the selenium constructor.
+
+B<NOTE>: By default a selenium server is started when you C<use> this module, and
+it's killed when your test exits. If wish to manage a selenium server yourself,
+(for instance you wish to start up a server once and run a number of tests
+against it) pass C<-no_selenium_server> to import:
+
+ use Test::WWW::Selenium 'MyApp'
+   -no_selenium_server = 1
+
+Along a similar vein you can also pass command line arguments to the selenium
+server via C<-selenium_args>:
+
+ use Test::WWW::Selenium 'MyApp'
+   -selenium_args = "-singleWindow -port 4445"
 
 =head2 sel_pid
 
@@ -77,29 +121,37 @@ Returns the process ID of the Catalyst server.
 
 
 sub _start_server {
+    my ($class, $args) = @_;
     # fork off a selenium server
     my $pid;
     if(0 == ($pid = fork())){
-	local $SIG{TERM} = sub {
-	    diag("Selenium server $$ going down (TERM)") if $DEBUG;
-	    exit 0;
-	};
-	
-	chdir '/';
-	
-	if(!$DEBUG){
-	    close *STDERR;
-	    close *STDOUT;
-	    #close *STDIN;
-	}
-	
-	diag("Selenium running in $$") if $DEBUG;
-        Alien::SeleniumRC::start()
-	    or croak "Can't start Selenium server";
-	diag("Selenium server $$ going down") if $DEBUG;
-	exit 1;
+        local $SIG{TERM} = sub {
+            diag("Selenium server $$ going down (TERM)") if $DEBUG;
+            exit 0;
+        };
+        
+        chdir '/';
+        
+        if(!$DEBUG){
+            close *STDERR;
+            close *STDOUT;
+            #close *STDIN;
+        }
+        
+        diag("Selenium running in $$") if $DEBUG;
+        $class->_start_selenium($args);
+        diag("Selenium server $$ going down") if $DEBUG;
+        exit 1;
     }
     $sel_pid = $pid;
+}
+
+# Moved out to be subclassable seperately to the fork logic
+sub _start_selenium {
+    my ($class, $arg) = @_;
+    $arg = '' unless defined $arg;
+    Alien::SeleniumRC::start($arg)
+      or croak "Can't start Selenium server";
 }
 
 sub sel_pid {
@@ -111,61 +163,77 @@ sub app_pid {
 }
 
 sub import {
-    my ($class, $appname) = @_;
+    my ($class, $appname, %args) = @_;
+
     croak q{Specify your app's name} if !$appname;
     $app = $appname;
     
     my $d = $ENV{Catalyst::Utils::class2env($appname). "_DEBUG"}; # MYAPP_DEBUG 
-    if(defined $d && $d){
-	$DEBUG = 1;
+    if(defined $d){
+        $DEBUG = $d;
     }
-    elsif(defined $d && $d == 0){
-	$DEBUG = 0;
+   
+    unless ($args{-no_seleniun_server}) {
+      $class->_start_server($args{-selenium_args}) or croak "Couldn't start selenium server";
     }
-    # if it's something else, leave the CATALYST_DEBUG setting in tact
-    
-    _start_server() or croak "Couldn't start selenium server";
     return 1;
 }
 
 sub start {
     my $class = shift;
     my $args  = shift || {};
-    
-    # start a Catalyst MyApp server
-    eval("use $app");
-    croak "Couldn't load $app: $@" if $@;
-    
-    my $pid;
-    if(0 == ($pid = fork())){
-	local $SIG{TERM} = sub {
-	    diag("Catalyst server $$ going down (TERM)") if $DEBUG;
-	    exit 0;
-	};
-	diag("Catalyst server running in $$") if $DEBUG;
-	$app->run('3000', 'localhost');
-	exit 1;
+
+    my $port = delete $args->{port};
+    $port ||= $ENV{Catalyst::Utils::class2env($app). "_PORT"} # MYAPP_PORT
+          ||  3000;
+ 
+    my $uri;
+
+    # Check for CATALYST_SERVER env var like TWMC does.
+    if ( $ENV{CATALYST_SERVER} ) {
+      $uri = $ENV{CATALYST_SERVER};
+    } elsif ( $args->{app_uri} ) {
+      $uri = delete $args->{app_uri}
+    } else {
+      # start a Catalyst MyApp server
+      eval("use $app");
+      croak "Couldn't load $app: $@" if $@;
+      
+      my $pid;
+      if(0 == ($pid = fork())){
+          local $SIG{TERM} = sub {
+              diag("Catalyst server $$ going down (TERM)") if $DEBUG;
+              exit 0;
+          };
+          diag("Catalyst server running in $$") if $DEBUG;
+          $app->run($port, 'localhost');
+          exit 1;
+      }
+      $uri = 'http://localhost:' . $port;
+      $app_pid = $pid;
     }
-    $app_pid = $pid;
     
     my $tries = 5;
     my $error;
+    my $sel_class = delete $args->{selenium_class} || 'Test::WWW::Selenium';
     my $sel;
+
     while(!$sel && $tries--){ 
-	sleep 1;
-	diag("Waiting for selenium server to start")
-	  if $DEBUG;
-	
-	eval {
-	    $sel = Test::WWW::Selenium->
-	      new(host => 'localhost',
-		  port => 4444,
-		  browser => $args->{browser} || '*firefox',
-		  browser_url => 'http://localhost:3000/',
-		  auto_stop => 0,
-		 );
-	};
-	$error = $@;
+        sleep 1;
+        diag("Waiting for selenium server to start")
+          if $DEBUG;
+        
+        eval {
+            $sel = $sel_class->new(
+                host => delete $args->{selenium_host} || 'localhost',
+                port => delete $args->{selenium_port} || 4444,
+                browser => '*firefox',
+                browser_url => $uri,
+                auto_stop => 0,
+                %$args
+            );
+        };
+        $error = $@;
     }
     croak "Can't start selenium: $error" if $error;
     
@@ -173,20 +241,20 @@ sub start {
 }
 
 END {
-    if($www_selenium){
-	diag("Shutting down Selenium Server $sel_pid") if $DEBUG;
-	$www_selenium->do_command('shutDown');
-	undef $www_selenium;
-    }
     if($sel_pid){
-	diag("Killing Selenium Server $sel_pid") if $DEBUG;
-	kill 15, $sel_pid or diag "Killing Selenium: $!";
-	undef $sel_pid;
+        if($www_selenium){
+            diag("Shutting down Selenium Server $sel_pid") if $DEBUG;
+            $www_selenium->do_command('shutDown');
+            undef $www_selenium;
+        }
+        diag("Killing Selenium Server $sel_pid") if $DEBUG;
+        kill 15, $sel_pid or diag "Killing Selenium: $!";
+        undef $sel_pid;
     }
     if($app_pid){
-	diag("Killing catalyst server $app_pid") if $DEBUG;
-	kill 15, $app_pid or diag "Killing MyApp: $!";
-	undef $app_pid;
+        diag("Killing catalyst server $app_pid") if $DEBUG;
+        kill 15, $app_pid or diag "Killing MyApp: $!";
+        undef $app_pid;
     }
     diag("Waiting for children to die") if $DEBUG;
     waitpid $sel_pid, 0 if $sel_pid;
@@ -199,6 +267,12 @@ END {
 Debugging messages are shown if C<CATALYST_DEBUG> or C<MYAPP_DEBUG>
 are set.  C<MYAPP> is the name of your application, uppercased.  (This
 is the same syntax as Catalyst itself.)
+
+C<CATALYST_SERVER> can be set to test against an externally running server,
+in a similar manner to how L<Test::WWW::Mechanize::Catalyst> behaves.
+
+The port that the application sever runs on can be affected by C<MYAPP_PORT>
+in addition to being specifiable in the arguments passed to start.
 
 =head1 DIAGNOSTICS
 

@@ -1,5 +1,9 @@
 Revision history for Test-WWW-Selenium-Catalyst
 
+0.03
+        Allow a bit more configurability in selenium invocation and app
+        location
+
 0.02    6 March 2008
         Don't call $sel->start; this breaks stuff
 

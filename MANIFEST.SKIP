@@ -1,1 +1,10 @@
-.git
+^\.git
+
+\..*?\.swp$
+
+^blib/
+^Makefile$
+\.bak$
+\.old$
+^Test-WWW-Selenium-Catalyst.*
+

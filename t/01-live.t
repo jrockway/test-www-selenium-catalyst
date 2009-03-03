@@ -5,7 +5,8 @@
 use Test::More tests => 79;
 use FindBin;
 use lib "$FindBin::Bin/lib";
-use Test::WWW::Selenium::Catalyst 'TestApp';
+use Test::WWW::Selenium::Catalyst 'TestApp',
+  -selenium_args => '-singleWindow';
 
 diag("You need to have firefox-bin in your path for this to work!");
 
