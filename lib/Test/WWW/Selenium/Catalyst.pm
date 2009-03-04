@@ -73,6 +73,8 @@ application server will be started.
 
 =item port
 
+B<Default>: 3000
+
 Port on which to run the catalyst application server. The C<MYAPP_PORT>
 environment variable is also respected.
 
@@ -89,25 +91,25 @@ selenium to add custom logic.
 =item selenium_port
 
 Location of externally running selenium server if you do not wish this module
-to control one. See also below for details.
+to control one. See also for details.
 
 =back
 
 All other options passed verbatim to the selenium constructor.
 
-B<NOTE>: By default a selenium server is started when you C<use> this module, and
-it's killed when your test exits. If wish to manage a selenium server yourself,
-(for instance you wish to start up a server once and run a number of tests
-against it) pass C<-no_selenium_server> to import:
+B<NOTE>: By default a selenium server is started when you C<use> this module,
+and it's killed when your test exits. If wish to manage a selenium server
+yourself, (for instance you wish to start up a server once and run a number of
+tests against it) pass C<-no_selenium_server> to import:
 
  use Test::WWW::Selenium 'MyApp'
-   -no_selenium_server = 1
+   -no_selenium_server => 1
 
 Along a similar vein you can also pass command line arguments to the selenium
 server via C<-selenium_args>:
 
  use Test::WWW::Selenium 'MyApp'
-   -selenium_args = "-singleWindow -port 4445"
+   -selenium_args => "-singleWindow -port 4445"
 
 =head2 sel_pid
 
@@ -250,7 +252,13 @@ END {
         diag("Killing Selenium Server $sel_pid") if $DEBUG;
         kill 15, $sel_pid or diag "Killing Selenium: $!";
         undef $sel_pid;
+
+    } elsif ($www_selenium) {
+        diag("Stopping Selenium Session $sel_pid") if $DEBUG;
+        $www_selenium->stop();
+        undef $www_selenium;
     }
+
     if($app_pid){
         diag("Killing catalyst server $app_pid") if $DEBUG;
         kill 15, $app_pid or diag "Killing MyApp: $!";
@@ -291,11 +299,12 @@ C<MyApp> is the name of your Catalyst app.
 
 =item * 
 
-Selenium website: L<http://www.openqa.org/>
+Selenium website: L<http://seleniumhq.org/>
 
 =item * 
 
 Description of what you can do with the C<$sel> object: L<Test::WWW::Selenium>
+and L<WWW::Selenium>
 
 =item * 
 
@@ -304,6 +313,8 @@ If you don't need a real web browser: L<Test::WWW::Mechanize::Catalyst>
 =back
 
 =head1 AUTHOR
+
+Ash Berlin C<< <ash@cpan.org> >>
 
 Jonathan Rockway, C<< <jrockway at cpan.org> >>
 
@@ -319,11 +330,11 @@ your bug as I make changes.
 
 Send me unified diffs against the git HEAD at:
 
-    git://git.jrock.us/Test-WWW-Selenium-Catalyst
+    git://github.com/jrockway/test-www-selenium-catalyst.git
 
 You can view the repository online at 
 
-    http://git.jrock.us/?p=Test-WWW-Selenium-Catalyst.git;a=summary
+    http://github.com/jrockway/test-www-selenium-catalyst/tree/master
 
 Thanks in advance for your contributions!
 
@@ -332,6 +343,8 @@ Thanks in advance for your contributions!
 Thanks for mst for getting on my case to actually write this thing :)
 
 =head1 COPYRIGHT & LICENSE
+
+Copyright 2009 Ash Berlin, all rights reserved.
 
 Copyright 2006 Jonathan Rockway, all rights reserved.
 

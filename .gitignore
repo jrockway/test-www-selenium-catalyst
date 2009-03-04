@@ -1,8 +1,10 @@
 META.yml
 Makefile
 Test-WWW-Selenium-Catalyst-*
-blib
-inc
+blib/
+inc/
 pm_to_blib
 cover_db
 MANIFEST
+MANIFEST.bak
+.*.swp
