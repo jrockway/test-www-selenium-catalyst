@@ -1,10 +1,35 @@
-^\.git
+# Avoid version control files.
+\bRCS\b
+\bCVS\b
+,v$
+\B\.svn\b
 
-\..*?\.swp$
+# Avoid Makemaker generated and utility files.
+\bMakefile$
+\bblib
+\bMakeMaker-\d
+\bpm_to_blib$
+\bblibdirs$
+^MANIFEST\.SKIP$
 
-^blib/
-^Makefile$
-\.bak$
+# Avoid Module::Build generated and utility files.
+\bBuild$
+\b_build
+
+# Avoid temp and backup files.
+~$
+\.tmp$
 \.old$
-^Test-WWW-Selenium-Catalyst.*
+\.bak$
+\.sw[op]$
+\#$
+\b\.#
+\.DS_Store$
 
+
+# No tarballs!
+\.gz$
+\.tar$
+
+svn.authors
+^\.git

@@ -1,6 +1,9 @@
 Revision history for Test-WWW-Selenium-Catalyst
 
-0.03
+0.04    4 Marh 2009
+        Un-fark the dist so that the thing installs
+
+0.03    4 March 2009
         Allow a bit more configurability in selenium invocation and app
         location
 
