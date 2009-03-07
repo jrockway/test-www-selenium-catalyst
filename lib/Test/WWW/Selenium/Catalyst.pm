@@ -24,7 +24,7 @@ Test::WWW::Selenium::Catalyst - Test your Catalyst application with Selenium
 
 =cut
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 =head1 DEVELOPERISH RELEASE
 
@@ -175,7 +175,7 @@ sub import {
         $DEBUG = $d;
     }
    
-    unless ($args{-no_seleniun_server}) {
+    unless ($args{-no_selenium_server}) {
       $class->_start_server($args{-selenium_args}) or croak "Couldn't start selenium server";
     }
     return 1;
@@ -246,6 +246,7 @@ END {
     if($sel_pid){
         if($www_selenium){
             diag("Shutting down Selenium Server $sel_pid") if $DEBUG;
+            $www_selenium->stop();
             $www_selenium->do_command('shutDown');
             undef $www_selenium;
         }

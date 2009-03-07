@@ -1,17 +1,21 @@
 Revision history for Test-WWW-Selenium-Catalyst
 
-0.04    4 Marh 2009
-        Un-fark the dist so that the thing installs
+0.05 - 2009/03/07
+ - Use IPC::Cmd::can_run in tests to not have so many spurious failues due to
+   no smoke rigs having java installed
 
-0.03    4 March 2009
-        Allow a bit more configurability in selenium invocation and app
-        location
+0.04 - 2009/03/05
+ - Un-fark the dist so that the thing installs
 
-0.02    6 March 2008
-        Don't call $sel->start; this breaks stuff
+0.03 - 2009/03/04
+ - Allow a bit more configurability in selenium invocation and app
+   location
 
-0.01    27 May 2007
-	Mostly the same... released for wider testing.
+0.02 - 2008/03/06
+ - Don't call $sel->start; this breaks stuff
 
-0.00_01 19 September 2006    
-        First version, released on an unsuspecting world.
+0.01 - 2007/05/27
+ - Mostly the same... released for wider testing.
+
+0.00_01 - 2006/09/19
+ - First version, released on an unsuspecting world.
