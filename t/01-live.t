@@ -10,7 +10,8 @@ use IPC::Cmd qw/can_run/;
 
 my $have_apps = 
   can_run('java') &&
-  ( can_run('firefox') || can_run('firefox-bin') );
+  ( can_run('firefox') || can_run('firefox-bin') ) ||
+  $ENV{WE_HAVE_SELENIUM};
                 
 SKIP: {
   unless ($have_apps) {
@@ -34,7 +35,7 @@ SKIP: {
       } ); 
     };
 
-    skip $@, 80 if $@;
+    skip $@, 79 if $@;
 
     $sel->open_ok('/');
     $sel->text_is("link=Click here", "Click here");
