@@ -1,5 +1,6 @@
 Revision history for Test-WWW-Selenium-Catalyst
 
+0.06 - 2009/08/26
  - Support for external selnium servers (RT 33214)
 
 0.05 - 2009/03/07

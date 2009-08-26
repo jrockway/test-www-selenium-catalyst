@@ -33,3 +33,5 @@
 
 svn.authors
 ^\.git
+
+^Test-WWW-Selenium-Catalyst-.*

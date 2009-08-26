@@ -24,7 +24,7 @@ Test::WWW::Selenium::Catalyst - Test your Catalyst application with Selenium
 
 =cut
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 =head1 DEVELOPERISH RELEASE
 
@@ -364,7 +364,8 @@ Thanks in advance for your contributions!
 
 =head1 ACKNOWLEDGEMENTS
 
-Thanks for mst for getting on my case to actually write this thing :)
+Thanks for mst for getting on my (jrockway's) case to actually write this thing
+:)
 
 =head1 COPYRIGHT & LICENSE
 
