@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-use inc::Module::Install;
+use inc::Module::Install 0.91;
 
 name          'Test-WWW-Selenium-Catalyst';
 perl_version  '5.008000';
@@ -15,5 +15,6 @@ requires(
 );
 
 test_requires 'IPC::Cmd' => '0.42';
+test_requires 'Test::More' => '0.92';
 
 WriteAll();

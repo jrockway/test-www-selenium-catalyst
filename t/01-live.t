@@ -2,7 +2,7 @@
 # 01-live.t 
 # Copyright (c) 2006 Jonathan Rockway <jrockway@cpan.org>
 
-use Test::More tests => 80;
+use Test::More;
 use FindBin;
 use lib "$FindBin::Bin/lib";
 
@@ -52,3 +52,5 @@ SKIP: {
     }
   }
 }
+
+done_testing;
