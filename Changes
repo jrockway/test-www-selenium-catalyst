@@ -1,5 +1,7 @@
 Revision history for Test-WWW-Selenium-Catalyst
 
+ - Support for external selnium servers (RT 33214)
+
 0.05 - 2009/03/07
  - Use IPC::Cmd::can_run in tests to not have so many spurious failues due to
    no smoke rigs having java installed

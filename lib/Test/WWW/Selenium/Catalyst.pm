@@ -174,6 +174,15 @@ sub import {
     if(defined $d){
         $DEBUG = $d;
     }
+
+    $args{-selenium_args} ||= '-singleWindow';
+
+    if ($ENV{SELENIUM_SERVER}) {
+        $args{-no_selenium_server} = 1;
+    }
+    elsif ($ENV{SELENIUM_PORT}) {
+        $args{-selenium_args} .= " -port " . $ENV{SELENIUM_PORT};
+    }
    
     unless ($args{-no_selenium_server}) {
       $class->_start_server($args{-selenium_args}) or croak "Couldn't start selenium server";
@@ -220,6 +229,19 @@ sub start {
     my $sel_class = delete $args->{selenium_class} || 'Test::WWW::Selenium';
     my $sel;
 
+    if ($ENV{SELENIUM_SERVER}) {
+        my $uri = $ENV{SELENIUM_SERVER};
+        $uri =~ s!^(?:http://)?!http://!;
+        $uri = new URI($uri);
+        $args->{selenium_host} = $uri->host;
+        $args->{selenium_port} = $uri->port;
+    }
+    elsif ($ENV{SELENIUM_PORT}) {
+        $args->{selenium_port} = $ENV{SELENIUM_PORT};
+    }
+
+    my $sel_host = delete $args->{selenium_host} || 'localhost';
+    my $sel_port = delete $args->{selenium_port} || 4444;
     while(!$sel && $tries--){ 
         sleep 1;
         diag("Waiting for selenium server to start")
@@ -227,8 +249,8 @@ sub start {
         
         eval {
             $sel = $sel_class->new(
-                host => delete $args->{selenium_host} || 'localhost',
-                port => delete $args->{selenium_port} || 4444,
+                host => $sel_host,
+                port => $sel_port,
                 browser => '*firefox',
                 browser_url => $uri,
                 auto_stop => 0,
