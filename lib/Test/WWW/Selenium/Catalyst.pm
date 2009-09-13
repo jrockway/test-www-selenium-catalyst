@@ -102,13 +102,13 @@ and it's killed when your test exits. If wish to manage a selenium server
 yourself, (for instance you wish to start up a server once and run a number of
 tests against it) pass C<-no_selenium_server> to import:
 
- use Test::WWW::Selenium 'MyApp'
+ use Test::WWW::Selenium 'MyApp',
    -no_selenium_server => 1
 
 Along a similar vein you can also pass command line arguments to the selenium
 server via C<-selenium_args>:
 
- use Test::WWW::Selenium 'MyApp'
+ use Test::WWW::Selenium 'MyApp',
    -selenium_args => "-singleWindow -port 4445"
 
 =head2 sel_pid
