@@ -270,7 +270,7 @@ END {
             diag("Shutting down Selenium Server $sel_pid") if $DEBUG;
             $www_selenium->stop();
             # This can fail if a page hasn't been requested yet.
-            eval { $www_selenium->do_command('shutDown') };
+            eval { $www_selenium->do_command('shutDownSeleniumServer') };
             undef $www_selenium;
         }
         diag("Killing Selenium Server $sel_pid") if $DEBUG;
