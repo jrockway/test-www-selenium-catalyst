@@ -278,8 +278,8 @@ END {
         undef $sel_pid;
 
     } elsif ($www_selenium) {
-        diag("Stopping Selenium Session $sel_pid") if $DEBUG;
-        $www_selenium->stop();
+        # Using external Selenium server - don't shut it down
+        diag("Using external Selenium server. Don't shut it down.") if $DEBUG;
         undef $www_selenium;
     }
 
